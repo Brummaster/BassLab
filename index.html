@@ -83,7 +83,15 @@ footer{text-align:center;color:#667187;font-size:11px;margin-top:24px}
 @media(max-width:560px){main{padding:17px 12px 45px}.card{padding:15px}.brand{font-size:20px}.freq{padding:10px 4px}.freq b{font-size:13px}.quality-grid{grid-template-columns:1fr}}
 </style>
 </head>
-<body>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/BassLab/sw.js")
+      .catch(error => console.error("Error SW:", error));
+  });
+}
+</script>
+  <body>
 <main>
 <header class="top">
 <div><div class="brand">BASS <span>LAB</span></div><div class="sub">ADVANCED AUDIO BASS EDITOR</div></div>
