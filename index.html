@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -278,7 +279,12 @@ function safeNumber(id,def){const n=Number($(id).value);return Number.isFinite(n
 function settings(){
  return {
   boost:safeNumber('manualGain',0)/100,
-  eq:[0,1,2].map(i=>safeNumber('eq'+i,0)),
+  /* CORREGIDO: leer los deslizadores EQ, no sus etiquetas output */
+  eq:[0,1,2].map(i=>{
+   const el=document.querySelector('.eq[data-band="'+i+'"]');
+   const n=Number(el&&el.value);
+   return Number.isFinite(n)?n:0;
+  }),
   freq:[0,1,2].map(i=>Math.max(10,safeNumber('freq'+i,[40,90,185][i]))),
   q:Math.max(.1,safeNumber('qValue',.9)),
   master:safeNumber('master',100)/100,
@@ -370,7 +376,6 @@ $('drop').ondragover=e=>{e.preventDefault();$('drop').style.borderColor='var(--a
 $('drop').ondragleave=()=>$('drop').style.borderColor='';
 $('drop').ondrop=e=>{e.preventDefault();$('drop').style.borderColor='';loadFile(e.dataTransfer.files[0])};
 
-/* Ajuste de tamaño del canvas: solo se cambia cuando realmente cambia su tamaño. */
 function resizeCanvas(canvas,context){
  const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
  const w=Math.max(1,Math.round(rect.width*dpr)),h=Math.max(1,Math.round(rect.height*dpr));
