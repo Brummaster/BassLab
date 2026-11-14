@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090b12"><title>BASS LAB — Audio Bass Editor</title>
+<style>
+:root{color-scheme:dark;--bg:#090b12;--panel:#121622;--panel2:#1a2030;--line:#293246;--muted:#929db2;--text:#f4f7ff;--a:#48e0bd;--b:#9b8cff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#202c40 0,transparent 48%),var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:980px;margin:auto;padding:24px 16px 60px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.brand{font-size:23px;font-weight:850;letter-spacing:.13em}.brand span{color:var(--a)}.sub{font-size:10px;color:var(--muted);letter-spacing:.2em;margin-top:3px}.pill{border:1px solid #27594f;color:var(--a);padding:6px 10px;border-radius:99px;font-size:11px}
+.card{background:linear-gradient(145deg,#151b29,#101520);border:1px solid var(--line);border-radius:20px;padding:18px;margin:13px 0;box-shadow:0 12px 35px #0003}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.head h2{font-size:15px;margin:0}.muted{color:var(--muted);font-size:12px}.upload{border:1px dashed #53627b;border-radius:15px;padding:22px;text-align:center;background:#0e1420}.upload strong{display:block;margin:8px 0 3px}.btn{border:0;border-radius:12px;padding:12px 16px;background:var(--a);color:#07120f;font-weight:800;font-size:13px;cursor:pointer}.btn.secondary{background:#252e40;color:var(--text);border:1px solid #39465d}.btn:disabled{opacity:.35;cursor:not-allowed}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.space{justify-content:space-between}.file{display:flex;gap:12px;align-items:center;margin-top:14px}.fileicon{width:42px;height:42px;border-radius:12px;background:#203c3a;display:grid;place-items:center;color:var(--a);font-size:20px}.fileinfo{min-width:0;flex:1}.fileinfo b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fileinfo small{color:var(--muted)}
+canvas{display:block;width:100%;touch-action:none}.wavebox{background:#0a101a;border:1px solid #263247;border-radius:13px;padding:9px;position:relative}.wave{height:116px}.time{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:6px}
+.transport{display:flex;align-items:center;gap:12px;margin-top:13px}.play{width:44px;height:44px;border-radius:50%;font-size:18px;padding:0}.seek{flex:1;min-width:80px}.range{width:100%;accent-color:var(--a)}input[type=range]{cursor:pointer}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.tab{padding:11px 6px;background:#0d1320;border:1px solid var(--line);border-radius:11px;color:var(--muted);font-size:12px;font-weight:700}.tab.active{color:var(--a);border-color:#368d7b;background:#122521}
+.panel{display:none}.panel.active{display:block}.big{font-size:28px;font-weight:850;color:var(--a);font-variant-numeric:tabular-nums}.sliderrow{margin:17px 0}.sliderrow label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.sliderrow output{color:var(--a);font-weight:750}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.freq{background:#0d1420;border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center}.freq b{display:block;font-size:15px}.freq small{color:var(--muted);font-size:10px}
+.note{font-size:11px;color:var(--muted);margin-top:9px}.status{padding:10px 12px;border-radius:10px;background:#0c1720;color:#b9d9d0;font-size:12px;margin-top:10px}.curve{height:145px;background:#0a101a;border:1px solid #263247;border-radius:12px}.mini{font-size:11px;color:var(--muted)}.check{display:flex;align-items:center;gap:8px;font-size:12px;color:#cbd3e2}.check input{accent-color:var(--a)}
+footer{text-align:center;color:#667187;font-size:11px;margin-top:24px}
+@media(max-width:560px){main{padding:18px 12px 45px}.card{padding:15px}.brand{font-size:20px}.grid3{gap:6px}.freq{padding:10px 4px}.freq b{font-size:13px}}
+
+/* BASS LAB appearance studio */
+:root{--bg:#090b12;--panel:#121622;--panel2:#1a2030;--line:#293246;--muted:#929db2;--text:#f4f7ff;--a:#48e0bd;--b:#9b8cff;--deep:#090b12;--sat:1;--contrast:1;--glow:0.35}
+body{background:radial-gradient(ellipse at 50% -20%,var(--panel2) 0,transparent 48%),var(--bg);color:var(--text);filter:saturate(var(--sat)) contrast(var(--contrast))}
+.card{background:linear-gradient(145deg,var(--panel),var(--bg));border-color:var(--line);box-shadow:0 12px 35px #0003,0 0 calc(var(--glow)*28px) color-mix(in srgb,var(--a) 18%,transparent)}
+.brand span,.big,.sliderrow output{color:var(--a)}
+.btn:not(.secondary){background:var(--a)}
+.btn.secondary,.freq,.tab,.upload,.wavebox,.curve{border-color:var(--line)}
+.tab.active{color:var(--a);border-color:var(--a);background:var(--panel2)}
+.wavebox,.curve{background:var(--bg)}
+.appearance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.theme-choice{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:13px;padding:10px;text-align:left;display:flex;align-items:center;gap:9px;min-height:52px;font:700 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.theme-choice.active{outline:2px solid var(--a);border-color:var(--a)}
+.swatch{width:24px;height:24px;border-radius:50%;flex:none;border:1px solid #ffffff55}
+.quality-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.quality-choice{border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);padding:12px 5px;font-size:11px;font-weight:750}
+.quality-choice.active{border-color:var(--a);color:var(--a);background:var(--bg)}
+.appearance-control{margin:15px 0}
+.appearance-control label{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-bottom:7px}
+.appearance-control output{color:var(--a);font-weight:750}
+body.quality-performance .card{box-shadow:none}
+body.quality-performance{background:var(--bg)}
+body.quality-performance *{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+body.quality-balanced .card{box-shadow:0 8px 22px #0003}
+body.quality-ultra .card{box-shadow:0 14px 38px #0005,0 0 22px color-mix(in srgb,var(--a) 13%,transparent)}
+@media(max-width:420px){.quality-grid{grid-template-columns:1fr}.appearance-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+</style></head>
+<body><main>
+<header class="top"><div><div class="brand">BASS <span>LAB</span></div><div class="sub">ADVANCED AUDIO BASS EDITOR</div></div><div class="pill">LOCAL PROCESSING</div></header>
+<section class="card">
+ <div class="head"><h2>01 · Tu audio</h2><span class="muted">MP3 · WAV · M4A*</span></div>
+ <div class="upload" id="drop"><div style="font-size:28px">♫</div><strong>Importa tu canción</strong><div class="muted">Elige un archivo de audio de tu dispositivo</div><div style="margin-top:13px"><button class="btn" id="choose">＋ Subir audio</button></div><input id="file" type="file" accept="audio/*,.mp3" hidden></div>
+ <div class="file" id="fileinfo" hidden><div class="fileicon">♫</div><div class="fileinfo"><b id="filename">Audio</b><small id="duration">Preparado</small></div><button class="btn secondary" id="remove">Cambiar</button></div>
+</section>
+<section class="card">
+ <div class="head"><h2>02 · Línea de tiempo</h2><span class="muted" id="selectionLabel">Selecciona un tramo</span></div>
+ <div class="wavebox"><canvas class="wave" id="wave"></canvas><div class="time"><span>00:00</span><span id="endtime">00:00</span></div></div>
+ <div class="transport"><button class="btn play" id="play" disabled>▶</button><input class="range seek" id="seek" type="range" min="0" max="1000" value="0" disabled><span class="mini" id="clock">00:00</span></div>
+ <div class="row space" style="margin-top:13px"><span class="mini">Arrastra sobre la onda para seleccionar una zona</span><button class="btn secondary" id="clearSel" disabled>Quitar selección</button></div>
+</section>
+<section class="card">
+ <div class="head"><h2>03 · Cómo quieres aumentar el bass</h2><span class="muted">Puedes combinar sistemas</span></div>
+ <div class="tabs"><button class="tab active" data-tab="manual">Manual</button><button class="tab" data-tab="curvePanel">Curva</button><button class="tab" data-tab="autoPanel">Automático</button></div>
+ <div class="panel active" id="manual">
+  <div class="sliderrow"><label>Potencia en la zona seleccionada <output id="manualOut">+150%</output></label><input class="range" id="manualGain" type="range" min="0" max="500" value="150"></div>
+  <div class="note">Selecciona un tramo en la onda de arriba. Si no seleccionas ninguno, el ajuste se aplica a toda la canción.</div>
+ </div>
+ <div class="panel" id="curvePanel">
+  <div class="row space" style="margin:13px 0 8px"><b style="font-size:13px">Dibuja tu curva de bass</b><button class="btn secondary" id="resetCurve">Restablecer</button></div>
+  <canvas class="curve" id="curve"></canvas>
+  <div class="row space" style="margin-top:7px"><span class="mini">Izquierda: inicio · Derecha: final</span><span class="mini">Arrastra con el dedo</span></div>
+  <div class="note">La altura de la curva controla la intensidad adicional a lo largo de la canción.</div>
+ </div>
+ <div class="panel" id="autoPanel">
+  <div class="sliderrow"><label>Sensibilidad de detección <output id="sensOut">55%</output></label><input class="range" id="sensitivity" type="range" min="10" max="95" value="55"></div>
+  <label class="check"><input type="checkbox" id="autoKick" checked> Reforzar golpes y transitorios</label>
+  <label class="check" style="margin-top:9px"><input type="checkbox" id="autoBass" checked> Detectar energía de frecuencias graves</label>
+  <button class="btn secondary" id="analyze" style="margin-top:14px;width:100%" disabled>✦ Analizar y detectar partes</button>
+  <div class="status" id="autoStatus">Importa una canción para analizar sus graves automáticamente.</div>
+ </div>
+</section>
+<section class="card">
+ <div class="head"><h2>04 · Control de frecuencias</h2><span class="muted">Ecualizador</span></div>
+ <div class="grid3">
+  <div class="freq"><b>20–60 Hz</b><small>SUB-BASS</small><input class="range eq" data-band="0" type="range" min="0" max="18" value="8"><output id="eq0">+8 dB</output></div>
+  <div class="freq"><b>60–120 Hz</b><small>BASS</small><input class="range eq" data-band="1" type="range" min="0" max="18" value="7"><output id="eq1">+7 dB</output></div>
+  <div class="freq"><b>120–250 Hz</b><small>LOW-MID</small><input class="range eq" data-band="2" type="range" min="0" max="18" value="3"><output id="eq2">+3 dB</output></div>
+ </div>
+ <div class="sliderrow"><label>Intensidad general <output id="masterOut">100%</output></label><input class="range" id="master" type="range" min="25" max="150" value="100"></div>
+ <label class="check"><input id="limiter" type="checkbox" checked> Protección contra picos y clipping</label>
+ <div class="note">Los aumentos extremos pueden distorsionar o dañar altavoces/auriculares. Empieza con niveles moderados y escucha a volumen bajo.</div>
+</section>
+<section class="card">
+ <div class="head"><h2>05 · Escuchar y exportar</h2><span class="muted">Comparación A/B</span></div>
+ <div class="row"><button class="btn secondary" id="original" disabled>Original</button><button class="btn" id="processed" disabled>Con BASS LAB</button><span class="mini" id="modeLabel">Modo: procesado</span></div>
+ <div class="row" style="margin-top:15px"><button class="btn" id="export" disabled style="flex:1">↓ Exportar audio WAV</button></div>
+ <div class="note">La exportación WAV conserva el procesamiento. La exportación MP3 se añadirá en la siguiente iteración para mantener compatibilidad y calidad.</div>
+ <div class="status" id="exportStatus">Carga un audio para habilitar la exportación.</div>
+</section>
+
+<section class="card" id="appearance">
+ <div class="head"><h2>06 · Apariencia y calidad</h2><span class="muted">Personaliza BASS LAB</span></div>
+ <div class="head"><b style="font-size:13px">Diez estilos visuales</b><span class="muted">Cambia al instante</span></div>
+ <div class="appearance-grid" id="themeGrid">
+  <button class="theme-choice active" data-theme="neon"><span class="swatch" style="background:linear-gradient(135deg,#090b12,#9b63ff)"></span>Neon Purple</button>
+  <button class="theme-choice" data-theme="cyber"><span class="swatch" style="background:linear-gradient(135deg,#06121d,#21c9ff)"></span>Cyber Blue</button>
+  <button class="theme-choice" data-theme="crimson"><span class="swatch" style="background:linear-gradient(135deg,#16090d,#ff405e)"></span>Crimson</button>
+  <button class="theme-choice" data-theme="graphite"><span class="swatch" style="background:linear-gradient(135deg,#101216,#aeb7c4)"></span>Graphite</button>
+  <button class="theme-choice" data-theme="toxic"><span class="swatch" style="background:linear-gradient(135deg,#07130b,#7cff4f)"></span>Toxic Green</button>
+  <button class="theme-choice" data-theme="amber"><span class="swatch" style="background:linear-gradient(135deg,#170e06,#ffad42)"></span>Amber</button>
+  <button class="theme-choice" data-theme="silver"><span class="swatch" style="background:linear-gradient(135deg,#f2f4f8,#8794a8)"></span>Apple Silver</button>
+  <button class="theme-choice" data-theme="rgb"><span class="swatch" style="background:linear-gradient(135deg,#ff3e8a,#36d9ff,#a6ff54)"></span>RGB Spectrum</button>
+  <button class="theme-choice" data-theme="midnight"><span class="swatch" style="background:linear-gradient(135deg,#050b20,#426bdb)"></span>Midnight</button>
+  <button class="theme-choice" data-theme="gold"><span class="swatch" style="background:linear-gradient(135deg,#100d08,#e6bd65)"></span>Gold Edition</button>
+ </div>
+ <div class="head" style="margin-top:20px"><b style="font-size:13px">Modo de calidad visual</b></div>
+ <div class="quality-grid" id="qualityGrid">
+  <button class="quality-choice" data-quality="ultra">✦ Máxima calidad</button>
+  <button class="quality-choice active" data-quality="balanced">◈ Equilibrado</button>
+  <button class="quality-choice" data-quality="performance">⚡ Máximo rendimiento</button>
+ </div>
+ <div class="note">Estos modos ajustan los efectos visuales de la interfaz; no cambian la resolución ni la calidad real del audio.</div>
+ <div class="head" style="margin-top:20px"><b style="font-size:13px">Ajustes de color profundo</b><button class="btn secondary" id="resetAppearance" type="button">Restablecer</button></div>
+ <div class="appearance-control"><label for="blackDepth">Profundidad de negros <output id="blackDepthOut">70%</output></label><input class="range" id="blackDepth" type="range" min="0" max="100" value="70"></div>
+ <div class="appearance-control"><label for="colorSat">Intensidad de color <output id="colorSatOut">100%</output></label><input class="range" id="colorSat" type="range" min="50" max="160" value="100"></div>
+ <div class="appearance-control"><label for="colorContrast">Contraste <output id="colorContrastOut">100%</output></label><input class="range" id="colorContrast" type="range" min="80" max="130" value="100"></div>
+ <div class="appearance-control"><label for="neonGlow">Brillo neón <output id="neonGlowOut">35%</output></label><input class="range" id="neonGlow" type="range" min="0" max="100" value="35"></div>
+ <div class="status" id="appearanceStatus" aria-live="polite">Apariencia guardada en este dispositivo.</div>
+</section>
+
+<footer>BASS LAB · El audio se procesa localmente en este dispositivo.</footer>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+let ctx=null,buffer=null,source=null,playing=false,startAt=0,offset=0,raf=0,selected=null,curve=Array.from({length:101},()=>0),autoRegions=[],useProcessed=true,dragWave=false,dragCurve=false;
+const wave=$('wave'),wc=wave.getContext('2d'),curveCanvas=$('curve'),cc=curveCanvas.getContext('2d');
+function fmt(s){s=Math.max(0,s||0);return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`}
+function sizeCanvas(c,ctx2){const r=c.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);c.width=Math.round(r.width*d);c.height=Math.round(r.height*d);ctx2.setTransform(d,0,0,d,0,0);return {w:r.width,h:r.height}}
+function drawWave(){const {w,h}=sizeCanvas(wave,wc);wc.fillStyle='#0a101a';wc.fillRect(0,0,w,h);if(!buffer){wc.fillStyle='#64748b';wc.font='12px sans-serif';wc.fillText('Tu forma de onda aparecerá aquí',12,h/2);return}
+ const data=buffer.getChannelData(0),step=Math.ceil(data.length/w),mid=h/2;wc.strokeStyle='#48e0bd';wc.lineWidth=1;wc.beginPath();for(let x=0;x<w;x++){let min=1,max=-1;for(let j=0;j<step;j++){const v=data[x*step+j]||0;if(v<min)min=v;if(v>max)max=v}wc.moveTo(x,mid+min*mid*.88);wc.lineTo(x,mid+max*mid*.88)}wc.stroke();
+ if(selected){wc.fillStyle='#9b8cff33';wc.fillRect(selected[0]*w,0,(selected[1]-selected[0])*w,h);wc.strokeStyle='#b5aaff';wc.strokeRect(selected[0]*w+.5,0,(selected[1]-selected[0])*w,h)}
+ if(playing){wc.strokeStyle='#fff';let x=(getTime()/buffer.duration)*w;wc.beginPath();wc.moveTo(x,0);wc.lineTo(x,h);wc.stroke()}
+}
+function drawCurve(){const {w,h}=sizeCanvas(curveCanvas,cc);cc.fillStyle='#0a101a';cc.fillRect(0,0,w,h);cc.strokeStyle='#263247';cc.lineWidth=1;for(let i=1;i<4;i++){cc.beginPath();cc.moveTo(0,h*i/4);cc.lineTo(w,h*i/4);cc.stroke()}cc.fillStyle='#9b8cff22';cc.beginPath();cc.moveTo(0,h);curve.forEach((v,i)=>cc.lineTo(i/100*w,h-v/100*h));cc.lineTo(w,h);cc.fill();cc.strokeStyle='#a99cff';cc.lineWidth=2;cc.beginPath();curve.forEach((v,i)=>{let x=i/100*w,y=h-v/100*h;i?cc.lineTo(x,y):cc.moveTo(x,y)});cc.stroke()}
+function getTime(){return playing?Math.min(buffer.duration,offset+(ctx.currentTime-startAt)):offset}
+function stop(){if(source){try{source.stop()}catch(e){}source=null}playing=false;cancelAnimationFrame(raf);$('play').textContent='▶'}
+function tick(){if(!playing)return;offset=getTime();$('seek').value=offset/buffer.duration*1000;$('clock').textContent=fmt(offset);drawWave();if(offset>=buffer.duration){stop();offset=0} else raf=requestAnimationFrame(tick)}
+function getGain(t){let g=Number($('manualGain').value)/100;if(selected&&t>=selected[0]*buffer.duration&&t<=selected[1]*buffer.duration){}else if(selected)g=0;let cv=curve[Math.min(100,Math.floor(t/buffer.duration*100))]||0;g+=cv/100*3;for(const r of autoRegions){if(t>=r[0]&&t<=r[1])g+=r[2]}return Math.min(6,g)}
+function buildGraph(audioSource){let last=audioSource;const filters=[];[[40,'lowshelf'],[90,'peaking'],[185,'peaking']].forEach((x,i)=>{let f=ctx.createBiquadFilter();f.type=x[1];f.frequency.value=x[0];f.Q.value=i?0.9:0.7;f.gain.value=useProcessed?Number($('eq'+i).value):0;last.connect(f);last=f;filters.push(f)});
+ const gain=ctx.createGain();gain.gain.value=useProcessed?Number($('master').value)/100:1;last.connect(gain);last=gain;
+ const comp=ctx.createDynamicsCompressor();if(useProcessed&&$('limiter').checked){comp.threshold.value=-4;comp.knee.value=4;comp.ratio.value=12;comp.attack.value=.003;comp.release.value=.12}else{comp.threshold.value=0;comp.ratio.value=1}last.connect(comp);comp.connect(ctx.destination);
+ if(useProcessed&&buffer){const now=ctx.currentTime;for(let t=0;t<buffer.duration;t+=.04){let g=getGain(t);gain.gain.setValueAtTime(Math.max(.0001,Number($('master').value)/100*(1+g)),now+t)}}
+ return {filters,gain,comp}}
+function play(){if(!buffer)return;if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();if(playing){offset=getTime();stop();return}
+ source=ctx.createBufferSource();source.buffer=buffer;buildGraph(source);source.onended=()=>{if(playing){playing=false;offset=0;$('play').textContent='▶';$('seek').value=0;drawWave()}};source.start(0,offset);startAt=ctx.currentTime;playing=true;$('play').textContent='Ⅱ';tick()}
+function setOffset(v){offset=Math.max(0,Math.min(buffer.duration,v));$('seek').value=offset/buffer.duration*1000;$('clock').textContent=fmt(offset);drawWave()}
+function loadFile(file){if(!file)return;if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();$('autoStatus').textContent='Cargando y decodificando audio…';file.arrayBuffer().then(a=>ctx.decodeAudioData(a)).then(b=>{stop();buffer=b;offset=0;selected=null;autoRegions=[];$('filename').textContent=file.name;$('duration').textContent=`${fmt(b.duration)} · ${(file.size/1048576).toFixed(1)} MB`;$('fileinfo').hidden=false;$('drop').hidden=true;$('endtime').textContent=fmt(b.duration);['play','seek','clearSel','analyze','original','processed','export'].forEach(id=>$(id).disabled=false);$('autoStatus').textContent='Audio listo. Puedes analizarlo automáticamente.';$('exportStatus').textContent='Listo para procesar y exportar.';drawWave();drawCurve()}).catch(e=>{$('autoStatus').textContent='No se pudo abrir este archivo. Prueba con MP3 o WAV.'})}
+$('choose').onclick=()=>$('file').click();$('file').onchange=e=>loadFile(e.target.files[0]);$('remove').onclick=()=>{stop();buffer=null;$('file').value='';$('fileinfo').hidden=true;$('drop').hidden=false;['play','seek','clearSel','analyze','original','processed','export'].forEach(id=>$(id).disabled=true);drawWave()};
+$('play').onclick=()=>{if(!buffer)return;if(playing){offset=getTime();stop();drawWave()}else play()};
+$('seek').oninput=e=>{if(!buffer)return;let was=playing;if(was)stop();setOffset(Number(e.target.value)/1000*buffer.duration);if(was)play()};
+$('original').onclick=()=>{useProcessed=false;restartPlayback()};$('processed').onclick=()=>{useProcessed=true;restartPlayback()};
+function restartPlayback(){if(playing){offset=getTime();stop();play()}$('modeLabel').textContent='Modo: '+(useProcessed?'procesado':'original')}
+function pointerPos(e,c){let r=c.getBoundingClientRect();return Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))}
+wave.addEventListener('pointerdown',e=>{if(!buffer)return;wave.setPointerCapture(e.pointerId);dragWave=true;let x=pointerPos(e,wave);selected=[x,x];drawWave()});
+wave.addEventListener('pointermove',e=>{if(!dragWave)return;let x=pointerPos(e,wave);selected=[Math.min(selected[0],x),Math.max(selected[0],x)];drawWave();$('selectionLabel').textContent=fmt(selected[0]*buffer.duration)+' – '+fmt(selected[1]*buffer.duration)});
+wave.addEventListener('pointerup',()=>{dragWave=false;if(selected&&selected[1]-selected[0]<.008){selected=null;$('selectionLabel').textContent='Toda la canción'}$('clearSel').disabled=!selected;drawWave()});
+$('clearSel').onclick=()=>{selected=null;$('selectionLabel').textContent='Toda la canción';$('clearSel').disabled=true;drawWave()};
+$('manualGain').oninput=e=>$('manualOut').textContent='+'+e.target.value+'%';$('master').oninput=e=>$('masterOut').textContent=e.target.value+'%';$('sensitivity').oninput=e=>$('sensOut').textContent=e.target.value+'%';
+document.querySelectorAll('.eq').forEach(el=>el.oninput=()=>{$('eq'+el.dataset.band).textContent='+'+el.value+' dB';if(playing)restartPlayback()});
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===t.dataset.tab))});
+function curveAt(e){let r=curveCanvas.getBoundingClientRect(),x=Math.max(0,Math.min(100,Math.round((e.clientX-r.left)/r.width*100))),y=Math.max(0,Math.min(100,Math.round((r.bottom-e.clientY)/r.height*100)));curve[x]=y;drawCurve()}
+curveCanvas.onpointerdown=e=>{dragCurve=true;curveCanvas.setPointerCapture(e.pointerId);curveAt(e)};curveCanvas.onpointermove=e=>{if(dragCurve)curveAt(e)};curveCanvas.onpointerup=()=>dragCurve=false;
+$('resetCurve').onclick=()=>{curve=Array.from({length:101},()=>0);drawCurve()};
+$('analyze').onclick=()=>{if(!buffer)return;autoRegions=[];$('autoStatus').textContent='Analizando energía de bajas frecuencias…';setTimeout(()=>{let data=buffer.getChannelData(0),sr=buffer.sampleRate,win=Math.floor(sr*.12),low=new Float32Array(data.length);let sum=0,prev=0;for(let i=0;i<data.length;i++){sum+=data[i];if(i>=Math.floor(sr*.012))sum-=data[i-Math.floor(sr*.012)];low[i]=sum/Math.floor(sr*.012)}let vals=[];for(let i=0;i<data.length;i+=win){let e=0,l=0;for(let j=i;j<Math.min(data.length,i+win);j++){e+=data[j]*data[j];l+=low[j]*low[j]}vals.push({t:i/sr,r:Math.sqrt(e/win),l:Math.sqrt(l/win)})}let avg=vals.reduce((a,v)=>a+v.l,0)/vals.length,threshold=avg*(.65+Number($('sensitivity').value)/100);let active=false,start=0;vals.forEach((v,i)=>{let hit=($('autoBass').checked&&v.l>threshold)||($('autoKick').checked&&v.r>(vals[i-1]?.r||0)*1.8&&v.r>avg*1.25);if(hit&&!active){start=v.t;active=true}else if(!hit&&active){if(v.t-start>.08)autoRegions.push([start,Math.min(buffer.duration,v.t),.65]);active=false}});if(active)autoRegions.push([start,buffer.duration,.65]);$('autoStatus').textContent=`Análisis terminado: ${autoRegions.length} zonas detectadas. La detección es una estimación y puedes combinarla con ajustes manuales y la curva.`;drawWave()},30)};
+function encodeWav(buf){let ch=buf.numberOfChannels,len=buf.length,rate=buf.sampleRate,bytes=44+len*ch*2,ab=new ArrayBuffer(bytes),v=new DataView(ab);function str(o,s){for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))}str(0,'RIFF');v.setUint32(4,bytes-8,true);str(8,'WAVE');str(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,ch,true);v.setUint32(24,rate,true);v.setUint32(28,rate*ch*2,true);v.setUint16(32,ch*2,true);v.setUint16(34,16,true);str(36,'data');v.setUint32(40,bytes-44,true);let p=44,channels=[];for(let c=0;c<ch;c++)channels.push(buf.getChannelData(c));for(let i=0;i<len;i++)for(let c=0;c<ch;c++){let s=Math.max(-1,Math.min(1,channels[c][i]));v.setInt16(p,s<0?s*32768:s*32767,true);p+=2}return new Blob([ab],{type:'audio/wav'})}
+$('export').onclick=async()=>{if(!buffer)return;$('export').disabled=true;$('exportStatus').textContent='Renderizando audio…';try{let off=new OfflineAudioContext(buffer.numberOfChannels,buffer.length,buffer.sampleRate),src=off.createBufferSource();src.buffer=buffer;let last=src;[[40,'lowshelf'],[90,'peaking'],[185,'peaking']].forEach((x,i)=>{let f=off.createBiquadFilter();f.type=x[1];f.frequency.value=x[0];f.Q.value=i?.9:.7;f.gain.value=Number($('eq'+i).value);last.connect(f);last=f});let gain=off.createGain();let base=Number($('master').value)/100;gain.gain.setValueAtTime(base,0);for(let t=0;t<buffer.duration;t+=.04){let g=getGain(t);gain.gain.setValueAtTime(Math.min(5,base*(1+g)),t)}last.connect(gain);last=gain;if($('limiter').checked){let comp=off.createDynamicsCompressor();comp.threshold.value=-4;comp.knee.value=4;comp.ratio.value=12;last.connect(comp);last=comp}last.connect(off.destination);src.start();let rendered=await off.startRendering();let blob=encodeWav(rendered),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(($('filename').textContent||'bass-lab').replace(/\.[^.]+$/,''))+'-BASS-LAB.wav';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);$('exportStatus').textContent='Exportación WAV completada.'}catch(e){$('exportStatus').textContent='No se pudo exportar: '+e.message}finally{$('export').disabled=false}};
+window.addEventListener('resize',()=>{drawWave();drawCurve()});drawWave();drawCurve();
+})();
+</script>
+<script>
+(()=> {
+ const themes={
+  neon:{bg:'#090b12',panel:'#121622',panel2:'#1a2030',line:'#293246',muted:'#929db2',text:'#f4f7ff',a:'#48e0bd',b:'#9b8cff'},
+  cyber:{bg:'#06101a',panel:'#0b1b2a',panel2:'#10283a',line:'#1b4057',muted:'#8caebe',text:'#eafaff',a:'#28d7ff',b:'#367cff'},
+  crimson:{bg:'#12080d',panel:'#211018',panel2:'#321522',line:'#512536',muted:'#c49aa6',text:'#fff0f3',a:'#ff4568',b:'#ff8a9d'},
+  graphite:{bg:'#101216',panel:'#191d23',panel2:'#252b33',line:'#3b444f',muted:'#a1aab5',text:'#f3f5f7',a:'#c1ccd8',b:'#8796a8'},
+  toxic:{bg:'#071009',panel:'#101d13',panel2:'#1a2b1d',line:'#304b34',muted:'#9ab49d',text:'#f1fff2',a:'#8cff55',b:'#d2ff75'},
+  amber:{bg:'#130d07',panel:'#21170c',panel2:'#332313',line:'#574027',muted:'#c4a77e',text:'#fff7e9',a:'#ffb347',b:'#ffdf8a'},
+  silver:{bg:'#e9edf3',panel:'#f8faff',panel2:'#dce3ed',line:'#c1cad7',muted:'#5d6878',text:'#17202d',a:'#3278bd',b:'#785bd6'},
+  rgb:{bg:'#090b13',panel:'#151625',panel2:'#202039',line:'#393754',muted:'#aaa6c4',text:'#f9f7ff',a:'#4bdcff',b:'#ff4d9b'},
+  midnight:{bg:'#05091a',panel:'#0d1430',panel2:'#17234a',line:'#293d72',muted:'#9baedb',text:'#eff3ff',a:'#648cff',b:'#8e74ff'},
+  gold:{bg:'#100d08',panel:'#1d180f',panel2:'#302515',line:'#554329',muted:'#bca982',text:'#fff8e8',a:'#e8c36a',b:'#fff0b0'}
+ };
+ const root=document.documentElement, body=document.body;
+ const $=id=>document.getElementById(id);
+ function applyTheme(name){
+  const t=themes[name]||themes.neon;
+  Object.entries(t).forEach(([k,v])=>root.style.setProperty('--'+k,v));
+  document.querySelectorAll('.theme-choice').forEach(b=>b.classList.toggle('active',b.dataset.theme===name));
+  localStorage.setItem('basslab-theme',name);
+ }
+ function applyQuality(q){
+  body.classList.remove('quality-ultra','quality-balanced','quality-performance');
+  body.classList.add('quality-'+q);
+  document.querySelectorAll('.quality-choice').forEach(b=>b.classList.toggle('active',b.dataset.quality===q));
+  localStorage.setItem('basslab-quality',q);
+ }
+ function applyColors(){
+  const depth=Number($('blackDepth').value),sat=Number($('colorSat').value),contrast=Number($('colorContrast').value),glow=Number($('neonGlow').value);
+  const rgb=n=>Math.round(9*(1-depth/100));
+  const base=rgb(depth).toString(16).padStart(2,'0');
+  root.style.setProperty('--bg','#'+base+base+Math.min(22,9+Math.round((100-depth)*.13)).toString(16).padStart(2,'0'));
+  root.style.setProperty('--sat',sat/100);root.style.setProperty('--contrast',contrast/100);root.style.setProperty('--glow',glow/100);
+  $('blackDepthOut').textContent=depth+'%';$('colorSatOut').textContent=sat+'%';$('colorContrastOut').textContent=contrast+'%';$('neonGlowOut').textContent=glow+'%';
+  ['blackDepth','colorSat','colorContrast','neonGlow'].forEach(id=>localStorage.setItem('basslab-'+id,$(id).value));
+ }
+ document.querySelectorAll('.theme-choice').forEach(b=>b.addEventListener('click',()=>{applyTheme(b.dataset.theme);$('appearanceStatus').textContent='Tema '+b.textContent.trim()+' aplicado.'}));
+ document.querySelectorAll('.quality-choice').forEach(b=>b.addEventListener('click',()=>{applyQuality(b.dataset.quality);$('appearanceStatus').textContent='Modo de calidad actualizado.'}));
+ ['blackDepth','colorSat','colorContrast','neonGlow'].forEach(id=>$(id).addEventListener('input',applyColors));
+ $('resetAppearance').addEventListener('click',()=>{
+  $('blackDepth').value=70;$('colorSat').value=100;$('colorContrast').value=100;$('neonGlow').value=35;
+  applyTheme('neon');applyQuality('balanced');applyColors();$('appearanceStatus').textContent='Apariencia restablecida.';
+ });
+ const savedTheme=localStorage.getItem('basslab-theme')||'neon';
+ const savedQuality=localStorage.getItem('basslab-quality')||'balanced';
+ ['blackDepth','colorSat','colorContrast','neonGlow'].forEach(id=>{const v=localStorage.getItem('basslab-'+id);if(v!==null)$(id).value=v});
+ applyTheme(savedTheme);applyQuality(savedQuality);applyColors();
+})();
+</script>
+
+</body></html>
