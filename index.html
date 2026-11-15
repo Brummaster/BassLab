@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="es">
 <head>
@@ -61,7 +62,7 @@ section[id]{scroll-margin-top:70px}.actions{display:flex;gap:8px;flex-wrap:wrap}
 <main class="wrap">
 <section class="card" id="home">
  <div class="head"><h2>🎧 Tu sesión</h2><span class="muted" id="fileMeta">Sin audio cargado</span></div>
- <div class="filebox" id="drop"><div style="font-size:28px">♫</div><b>Importa una canción</b><p class="note">MP3, WAV, M4A y formatos compatibles con Safari.</p><button class="btn" id="choose">Elegir archivo</button><input id="file" type="file" accept="audio/*"></div>
+ <div class="filebox" id="drop"><div style="font-size:28px">♫</div><b>Importa una canción</b><p class="note">MP3, WAV, M4A y formatos compatibles con Safari.</p><button class="btn" id="choose">Elegir archivo</button><input id="file" type="file" accept=".mp3,.wav,.m4a,.aac,.aiff,.flac,audio/mpeg,audio/mp3,audio/wav,audio/mp4,audio/aac"></div>
  <div id="loaded" class="hidden"><div class="row"><b id="filename">Audio</b><button class="btn secondary" id="remove">Quitar audio</button></div><p class="note" id="duration"></p><canvas id="wave"></canvas><div class="row" style="margin-top:8px"><button class="btn secondary" id="clearSel">Toda la canción</button><span class="mini" id="selectionLabel">Toda la canción</span></div></div>
  <div class="status" id="status">Carga un archivo para empezar. La sesión se procesa en tu dispositivo.</div>
 </section>
@@ -147,7 +148,8 @@ section[id]{scroll-margin-top:70px}.actions{display:flex;gap:8px;flex-wrap:wrap}
  <button class="btn secondary" id="analyze" disabled style="width:100%">Analizar canción</button><div class="status" id="analysisStatus">Carga un audio para analizarlo.</div>
 </section>
 <section class="card" id="meter">
- <div class="head"><h2>📡 Analizador de espectro</h2><span class="muted">LIVE</span></div><canvas id="spectrum" style="height:150px"></canvas><p class="note">Visualización de frecuencias durante la reproducción.</p>
+ <div class="head"><h2>📡 Analizador de espectro</h2><span class="muted">LIVE</span></div>
+ <canvas id="spectrum" style="height:150px"></canvas><p class="note">Visualización de frecuencias durante la reproducción.</p>
 </section>
 <section class="card" id="export">
  <div class="head"><h2>📦 Exportación</h2><span class="muted">RENDER</span></div>
