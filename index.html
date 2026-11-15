@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090b12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BASS LAB">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<title>BASS LAB · Mobile Audio Studio</title>
+<style>
+:root{--bg:#090b12;--panel:#121622;--panel2:#1a2030;--line:#293246;--text:#f4f7ff;--muted:#929db2;--a:#b66cff;--good:#63dba4;--danger:#ff657d}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 calc(94px + env(safe-area-inset-bottom));}
+button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);padding:13px 16px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:18px;font-weight:950;letter-spacing:2px}.brand span{color:var(--a)}.subbrand{font-size:10px;color:var(--muted);letter-spacing:1.5px;margin-top:3px}
+.wrap{max-width:850px;margin:auto;padding:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:15px;margin:12px 0;box-shadow:0 8px 28px #0002}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.head h2{font-size:15px;margin:0;font-weight:850}.muted,.note,.explain{color:var(--muted)}.muted{font-size:11px}.note{font-size:12px;line-height:1.5;margin:0 0 12px}.explain{font-size:11px;line-height:1.4;margin:5px 0 8px}
+.btn{border:0;border-radius:11px;background:var(--a);color:#100b18;font-weight:850;padding:12px 14px;min-height:42px}.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.btn.danger{background:#4b1d2a;color:#ffdbe2}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.row .mini{flex:0 0 auto}.mini{font-size:11px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.control{padding:11px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;margin:9px 0}.control-top{display:flex;justify-content:space-between;gap:8px;align-items:center}.control-title{font-size:12px;font-weight:800}.control output,.freq output{font-size:12px;color:var(--a);font-variant-numeric:tabular-nums;font-weight:800}
+input[type=range]{width:100%;accent-color:var(--a);margin:12px 0 3px;touch-action:pan-y}input[type=number],select{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px;min-height:40px}
+label{font-size:11px;color:var(--muted)}.freq{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}.freq b{display:block;font-size:11px}.freq small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+.check{display:flex;gap:9px;align-items:center;padding:8px 2px;font-size:12px;color:var(--text)}.check input{accent-color:var(--a);width:17px;height:17px}
+canvas{display:block;width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;touch-action:none}
+#wave{height:132px}#curve{height:155px}
+.status,.tip{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;color:var(--muted);font-size:11px;line-height:1.45;margin-top:10px}.tip{border-color:#624d20;color:#f3d89b}
+.nav{position:fixed;z-index:6;bottom:0;left:0;right:0;padding:8px 7px calc(8px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;gap:3px;background:color-mix(in srgb,var(--panel) 94%,transparent);backdrop-filter:blur(18px);border-top:1px solid var(--line)}
+.nav a{color:var(--muted);text-decoration:none;text-align:center;font-size:10px;flex:1;padding:5px 1px}.nav a span{display:block;font-size:17px;margin-bottom:2px}
+.player{position:sticky;bottom:65px;z-index:4;background:color-mix(in srgb,var(--panel) 96%,transparent);border:1px solid var(--line);border-radius:13px;padding:10px;margin:10px 0;backdrop-filter:blur(15px)}
+.player .row{align-items:center}.player button{flex:0 0 auto}.player input{flex:1;min-width:70px}
+.pill{border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:30px;padding:6px 9px;font-size:10px}
+#appearance{overflow:hidden;position:relative}
+.status{overflow-wrap:anywhere}#sessionTools select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px;width:100%}.theme-choice{transition:transform .16s,border-color .16s,background .16s}.theme-choice:active{transform:scale(.985)}.appearance-intro{display:flex;gap:12px;align-items:center;padding:13px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(135deg,var(--panel2),var(--bg));margin-bottom:14px}
+.appearance-orb{width:43px;height:43px;flex:0 0 43px;border-radius:13px;background:linear-gradient(135deg,var(--a),var(--line));box-shadow:0 0 25px color-mix(in srgb,var(--a) 35%,transparent);display:grid;place-items:center;font-size:21px}
+.appearance-intro strong{display:block;font-size:13px;margin-bottom:3px}.appearance-intro small{color:var(--muted);font-size:11px;line-height:1.4;display:block}
+.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.theme-choice{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;gap:9px;text-align:left;min-height:105px;padding:11px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:13px;transition:transform .16s,border-color .16s,box-shadow .16s}
+.theme-choice:active{transform:scale(.98)}.theme-choice.active{border-color:var(--a);box-shadow:0 0 0 1px var(--a),0 8px 22px color-mix(in srgb,var(--a) 12%,transparent)}
+.theme-top{display:flex;justify-content:space-between;align-items:center;gap:6px}.theme-name{font-size:12px;font-weight:850;letter-spacing:.2px}.theme-check{font-size:10px;color:var(--a);opacity:0}.theme-choice.active .theme-check{opacity:1}
+.theme-desc{font-size:10px;line-height:1.35;color:var(--muted);min-height:26px}
+.swatches{display:flex;gap:5px}.swatches i{display:block;width:17px;height:17px;border-radius:6px;border:1px solid #ffffff26}
+.theme-preview{margin-top:14px;padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.preview-head{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:10px}.preview-name{font-size:13px;font-weight:900;color:var(--text)}
+.preview-eq{height:55px;display:flex;align-items:end;gap:4px;padding:8px 10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.preview-eq i{display:block;flex:1;border-radius:4px 4px 1px 1px;background:linear-gradient(180deg,var(--a),color-mix(in srgb,var(--a) 25%,var(--panel)));min-width:3px}
+.preview-bottom{display:flex;gap:7px;margin-top:9px}.preview-chip{padding:6px 9px;border-radius:20px;background:var(--panel2);border:1px solid var(--line);font-size:9px;color:var(--muted)}.preview-chip.active{color:var(--text);border-color:var(--a)}
+.quality-block{margin-top:17px;padding-top:15px;border-top:1px solid var(--line)}.quality-title{font-size:12px;font-weight:850;margin-bottom:4px}.quality-sub{font-size:10px;color:var(--muted);line-height:1.4;margin-bottom:10px}
+.quality-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.quality-choice{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:11px;padding:10px 5px;font-size:10px;min-height:58px;line-height:1.3}.quality-choice.active{border-color:var(--a);box-shadow:0 0 0 1px var(--a);color:var(--text)}
+@media(max-width:370px){.theme-grid{grid-template-columns:1fr}.theme-choice{min-height:88px}.quality-grid{grid-template-columns:1fr}}
+
+.hidden{display:none!important}.filebox{border:1px dashed #56627a;padding:22px 12px;text-align:center;border-radius:14px}.filebox input{display:none}
+section[id]{scroll-margin-top:70px}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions>*{flex:1;min-width:120px}
+@media(max-width:430px){.grid3{grid-template-columns:1fr}.wrap{padding:10px}.card{padding:12px}.head h2{font-size:14px}}
+</style>
+</head>
+<body>
+<header><div><div class="brand">BASS <span>LAB</span></div><div class="subbrand">MOBILE AUDIO · MIXING & MASTERING</div></div><span class="pill">STUDIO 3.0</span></header>
+<main class="wrap">
+<section class="card" id="home">
+ <div class="head"><h2>🎧 Tu sesión</h2><span class="muted" id="fileMeta">Sin audio cargado</span></div>
+ <div class="filebox" id="drop"><div style="font-size:28px">♫</div><b>Importa una canción</b><p class="note">MP3, WAV, M4A y formatos compatibles con Safari.</p><button class="btn" id="choose">Elegir archivo</button><input id="file" type="file" accept="audio/*"></div>
+ <div id="loaded" class="hidden"><div class="row"><b id="filename">Audio</b><button class="btn secondary" id="remove">Quitar audio</button></div><p class="note" id="duration"></p><canvas id="wave"></canvas><div class="row" style="margin-top:8px"><button class="btn secondary" id="clearSel">Toda la canción</button><span class="mini" id="selectionLabel">Toda la canción</span></div></div>
+ <div class="status" id="status">Carga un archivo para empezar. La sesión se procesa en tu dispositivo.</div>
+</section>
+<div class="player"><div class="row"><button class="btn" id="play" disabled>▶</button><button class="btn secondary" id="original" disabled>Original</button><button class="btn secondary" id="processed" disabled>Procesado</button><span class="mini" id="clock">00:00</span></div><input id="seek" type="range" min="0" max="1000" value="0" disabled><div class="row"><span class="mini" id="modeLabel">Modo: procesado</span><span class="mini" id="durationSmall">00:00</span></div></div>
+<section class="card" id="sessionTools">
+ <div class="head"><h2>🧰 Presets y sesión</h2><span class="muted">CONTROL DE ESTUDIO</span></div>
+ <p class="note">Empieza con un ajuste de mastering, guarda tus propios parámetros o exporta la configuración para reutilizarla.</p>
+ <label for="presetSelect">Presets de partida</label>
+ <select id="presetSelect" style="width:100%;margin:7px 0 10px">
+  <option value="">Selecciona un preset…</option>
+  <option value="clean">Clean Master · limpio y equilibrado</option>
+  <option value="bass">Deep Bass · graves contundentes</option>
+  <option value="club">Club Punch · pegada y presencia</option>
+  <option value="vocal">Vocal Clarity · voz clara</option>
+  <option value="warm">Warm Analog · cálido y suave</option>
+  <option value="bright">Bright Air · brillo y aire</option>
+ </select>
+ <div class="grid2">
+  <button class="btn secondary" id="savePreset">Guardar preset propio</button>
+  <button class="btn secondary" id="loadPreset">Cargar preset guardado</button>
+  <button class="btn secondary" id="exportSettings">Exportar ajustes (.json)</button>
+  <button class="btn secondary" id="importSettings">Importar ajustes (.json)</button>
+ </div>
+ <input id="settingsFile" type="file" accept="application/json,.json" class="hidden">
+ <div class="row" style="margin-top:10px">
+  <button class="btn secondary" id="abStore">Guardar punto A</button>
+  <button class="btn secondary" id="abRecall">Volver al punto A</button>
+  <button class="btn danger" id="resetAll">Reiniciar ajustes</button>
+ </div>
+ <div class="status" id="presetStatus">Tus ajustes se aplican tanto a la escucha procesada como a la exportación.</div>
+</section>
+<section class="card" id="bass">
+ <div class="head"><h2>🔊 Graves y subgraves</h2><span class="muted">LOW END</span></div>
+ <div class="control"><div class="control-top"><span class="control-title">Refuerzo de graves</span><output id="manualOut">+6.0 dB</output></div><input id="manualGain" type="range" min="0" max="1000" step="1" value="150"><p class="explain">Hasta +40 dB de refuerzo. Los valores extremos pueden saturar la señal; escucha a volumen moderado.</p></div>
+ <div class="grid3">
+  <div class="freq"><b>SUB-BASS</b><small>20–60 Hz</small><input class="range eq" data-band="0" id="eq0" type="range" min="-18" max="30" step=".1" value="5"><output id="eq0Out">+5.0 dB</output></div>
+  <div class="freq"><b>BASS</b><small>60–120 Hz</small><input class="range eq" data-band="1" id="eq1" type="range" min="-18" max="30" step=".1" value="4"><output id="eq1Out">+4.0 dB</output></div>
+  <div class="freq"><b>LOW-MID</b><small>120–250 Hz</small><input class="range eq" data-band="2" id="eq2" type="range" min="-18" max="30" step=".1" value="2"><output id="eq2Out">+2.0 dB</output></div>
+ </div>
+ <div class="grid2" style="margin-top:10px"><div><label>Frecuencia subgrave (Hz)</label><input id="freq0" type="number" min="20" max="120" value="40"></div><div><label>Frecuencia grave (Hz)</label><input id="freq1" type="number" min="40" max="250" value="90"></div><div><label>Frecuencia low-mid (Hz)</label><input id="freq2" type="number" min="80" max="500" value="185"></div><div><label>Q · anchura de banda</label><input id="qValue" type="number" min=".1" max="10" step=".1" value=".9"></div></div>
+</section>
+<section class="card" id="eq">
+ <div class="head"><h2>🎚️ Ecualizador paramétrico</h2><span class="muted">4 BANDAS EXTRA</span></div>
+ <p class="note">Presencia, claridad, brillo y aire. Cada banda tiene su propio control de ganancia.</p>
+ <div id="extraEq"></div>
+ <div class="control"><div class="control-top"><span class="control-title">Filtro pasa-altos</span><output id="hpOut">20 Hz</output></div><input id="hp" type="range" min="20" max="500" value="20"></div>
+ <div class="control"><div class="control-top"><span class="control-title">Filtro pasa-bajos</span><output id="lpOut">20 kHz</output></div><input id="lp" type="range" min="2000" max="20000" value="20000"></div>
+ <div class="control"><div class="control-top"><span class="control-title">Ganancia de entrada</span><output id="inputOut">0 dB</output></div><input id="inputGain" type="range" min="-24" max="24" step=".1" value="0"></div>
+ <div class="control"><div class="control-top"><span class="control-title">Volumen de salida</span><output id="masterOut">100%</output></div><input id="master" type="range" min="0" max="150" value="100"></div>
+</section>
+<section class="card" id="dynamics">
+ <div class="head"><h2>🎛️ Dinámica y mastering</h2><span class="muted">COMP · LIMIT</span></div>
+ <label class="check"><input type="checkbox" id="compressorEnabled" checked> Activar compresor</label>
+ <div class="control"><div class="control-top"><span class="control-title">Threshold / umbral</span><output id="thresholdOut">-18 dB</output></div><input id="threshold" type="range" min="-60" max="0" value="-18"></div>
+ <div class="control"><div class="control-top"><span class="control-title">Ratio / relación</span><output id="ratioOut">3:1</output></div><input id="ratio" type="range" min="1" max="20" step=".1" value="3"></div>
+ <div class="control"><div class="control-top"><span class="control-title">Attack / ataque</span><output id="attackOut">10 ms</output></div><input id="attack" type="range" min=".1" max="100" step=".1" value="10"></div>
+ <div class="control"><div class="control-top"><span class="control-title">Release / liberación</span><output id="releaseOut">120 ms</output></div><input id="release" type="range" min="10" max="1000" value="120"></div>
+ <label class="check"><input type="checkbox" id="limiter" checked> Activar limitador</label>
+ <div class="control"><div class="control-top"><span class="control-title">Techo del limitador</span><output id="ceilingOut">-1 dB</output></div><input id="ceiling" type="range" min="-12" max="0" step=".1" value="-1"></div>
+ <div class="control"><div class="control-top"><span class="control-title">Saturación armónica</span><output id="driveOut">0%</output></div><input id="drive" type="range" min="0" max="100" value="0"></div>
+</section>
+<section class="card" id="fx">
+ <div class="head"><h2>🌌 Efectos</h2><span class="muted">FX RACK</span></div>
+ <div class="control"><div class="control-top"><span class="control-title">Reverb / ambiente</span><output id="reverbOut">0%</output></div><input id="reverb" type="range" min="0" max="100" value="0"></div>
+ <div class="control"><div class="control-top"><span class="control-title">Delay / eco</span><output id="delayOut">0%</output></div><input id="delay" type="range" min="0" max="100" value="0"><label>Tiempo del eco (ms)</label><input id="delayMs" type="number" min="50" max="1200" step="10" value="320"></div>
+ <div class="control"><div class="control-top"><span class="control-title">Panorama estéreo</span><output id="panOut">Centro</output></div><input id="pan" type="range" min="-100" max="100" value="0"></div>
+ <div class="control"><div class="control-top"><span class="control-title">Chorus · anchura y movimiento</span><output id="chorusOut">0%</output></div><input id="chorus" type="range" min="0" max="100" value="0"><p class="explain">Añade una duplicación modulada para dar sensación de amplitud.</p></div>
+ <div class="control"><div class="control-top"><span class="control-title">Flanger · barrido metálico</span><output id="flangerOut">0%</output></div><input id="flanger" type="range" min="0" max="100" value="0"><p class="explain">Efecto de retardo corto con realimentación. Úsalo con moderación.</p></div>
+</section>
+<section class="card" id="stereo">
+ <div class="head"><h2>🌀 Imagen estéreo</h2><span class="muted">STEREO FIELD</span></div>
+ <div class="control"><div class="control-top"><span class="control-title">Anchura estéreo</span><output id="widthOut">100%</output></div><input id="stereoWidth" type="range" min="0" max="200" value="100"><p class="explain">0% centra la imagen en mono; 100% mantiene la anchura original; más de 100% exagera la diferencia entre canales. Comprueba siempre la compatibilidad mono.</p></div>
+</section>
+<section class="card" id="curveSection">
+ <div class="head"><h2>✏️ Curva personalizada</h2><button class="btn secondary" id="resetCurve">Reiniciar curva</button></div>
+ <p class="note">Dibuja sobre la curva para automatizar el refuerzo de graves a lo largo de la canción.</p><canvas id="curve"></canvas>
+</section>
+<section class="card" id="analysis">
+ <div class="head"><h2>🧠 Análisis automático</h2><span class="muted">AUDIO ANALYSIS</span></div>
+ <p class="note">Analiza la energía de baja frecuencia y calcula un punto de partida para el refuerzo.</p>
+ <div class="control"><div class="control-top"><span class="control-title">Intensidad del análisis</span><output id="sensitivityOut">55%</output></div><input id="sensitivity" type="range" min="10" max="95" value="55"></div>
+ <label class="check"><input type="checkbox" id="autoBass" checked> Ajustar según energía de graves</label>
+ <button class="btn secondary" id="analyze" disabled style="width:100%">Analizar canción</button><div class="status" id="analysisStatus">Carga un audio para analizarlo.</div>
+</section>
+<section class="card" id="meter">
+ <div class="head"><h2>📡 Analizador de espectro</h2><span class="muted">LIVE</span></div><canvas id="spectrum" style="height:150px"></canvas><p class="note">Visualización de frecuencias durante la reproducción.</p>
+</section>
+<section class="card" id="export">
+ <div class="head"><h2>📦 Exportación</h2><span class="muted">RENDER</span></div>
+ <div class="grid2"><div><label>Formato</label><select id="format"><option value="wav">WAV</option><option value="mp3">MP3 · requiere conexión</option></select></div><div><label>Frecuencia de muestreo</label><select id="sampleRate"><option value="original">Original</option><option value="44100">44.100 Hz</option><option value="48000">48.000 Hz</option><option value="96000">96.000 Hz</option></select></div><div><label>Profundidad WAV</label><select id="bitDepth"><option value="16">16-bit PCM</option><option value="24">24-bit PCM</option><option value="32">32-bit Float</option></select></div><div><label>Bitrate MP3</label><select id="bitrate"><option value="320">320 kbps</option><option value="256">256 kbps</option><option value="192">192 kbps</option><option value="128">128 kbps</option></select></div></div>
+ <div class="actions" style="margin-top:12px"><button class="btn" id="render" disabled>Preparar archivo</button><button class="btn secondary" id="save" disabled>Guardar / compartir</button></div><a id="download" class="hidden" style="display:block;color:var(--a);margin-top:12px">Descargar audio</a><div class="status" id="exportStatus">Carga una canción para habilitar la exportación.</div>
+</section>
+<section class="card" id="appearance">
+ <div class="head"><h2>🎨 Apariencia</h2><span class="muted">PERSONALIZA EL ESTUDIO</span></div>
+ <div class="appearance-intro">
+  <div class="appearance-orb">✦</div>
+  <div><strong>Dale tu estilo a BASS LAB</strong><small>Elige una identidad visual. El tema cambia los fondos, paneles, bordes, controles y colores de acento.</small></div>
+ </div>
+ <div class="head"><h2>Temas del estudio</h2><span class="muted">10 ESTILOS</span></div>
+ <div class="theme-grid" id="themes">
+  <button class="theme-choice active" data-theme="Neon"><div class="theme-top"><span class="theme-name">Neon</span><span class="theme-check">✓ ACTIVO</span></div><div class="swatches"><i style="background:#090b12"></i><i style="background:#24203b"></i><i style="background:#b66cff"></i><i style="background:#f4f7ff"></i></div><div class="theme-desc">Violeta eléctrico sobre negro profundo</div></button>
+  <button class="theme-choice" data-theme="Cyber"><div class="theme-top"><span class="theme-name">Cyber</span><span class="theme-check">✓ ACTIVO</span></div><div class="swatches"><i style="background:#06101a"></i><i style="background:#102a3a"></i><i style="background:#21c9ff"></i><i style="background:#e5f8ff"></i></div><div class="theme-desc">Azul tecnológico y energía futurista</div></button>
+  <button class="theme-choice" data-theme="Crimson"><div class="theme-top"><span class="theme-name">Crimson</span><span class="theme-check">✓ ACTIVO</span></div><div class="swatches"><i style="background:#16090d"></i><i style="background:#32151f"></i><i style="background:#ff405e"></i><i style="background:#fff0f3"></i></div><div class="theme-desc">Rojo intenso con carácter oscuro</div></button>
+  <button class="theme-choice" data-theme="Graphite"><div class="theme-top"><span class="theme-name">Graphite</span><span class="theme-check">✓ ACTIVO</span></div><div class="swatches"><i style="background:#101216"></i><i style="background:#272c34"></i><i style="background:#c3ccd8"></i><i style="background:#f3f5f7"></i></div><div class="theme-desc">Minimalismo gris de equipo profesional</div></button>
+  <button class="theme-choice" data-theme="Toxic"><div class="theme-top"><span class="theme-name">Toxic</span><span class="theme-check">✓ ACTIVO</span></div><div class="swatches"><i style="background:#07130b"></i><i style="background:#142c18"></i><i style="background:#7cff4f"></i><i style="background:#edffe9"></i></div><div class="theme-desc">Verde ácido, potente y muy contrastado</div></button>
+  <button class="theme-choice" data-theme="Amber"><div class="theme-top"><span class="theme-name">Amber</span><span class="theme-check">✓ ACTIVO</span></div><div class="swatches"><i style="background:#170e06"></i><i style="background:#38220e"></i><i style="background:#ffad42"></i><i style="background:#fff6e9"></i></div><div class="theme-desc">Ámbar cálido inspirado en equipos analógicos</div></button>
+  <button class="theme-choice" data-theme="Silver"><div class="theme-top"><span class="theme-name">Silver</span><span class="theme-check">✓ ACTIVO</span></div><div class="swatches"><i style="background:#e9edf3"></i><i style="background:#fff"></i><i style="background:#647fba"></i><i style="background:#19202a"></i></div><div class="theme-desc">Interfaz clara, limpia y elegante</div></button>
+  <button class="theme-choice" data-theme="RGB"><div class="theme-top"><span class="theme-name">RGB</span><span class="theme-check">✓ ACTIVO</span></div><div class="swatches"><i style="background:#10101a"></i><i style="background:#292039"></i><i style="background:#ff55bc"></i><i style="background:#50e6ff"></i></div><div class="theme-desc">Estética gaming con acentos vibrantes</div></button>
+  <button class="theme-choice" data-theme="Midnight"><div class="theme-top"><span class="theme-name">Midnight</span><span class="theme-check">✓ ACTIVO</span></div><div class="swatches"><i style="background:#050b20"></i><i style="background:#111e42"></i><i style="background:#618aff"></i><i style="background:#edf2ff"></i></div><div class="theme-desc">Azul noche profundo y sereno</div></button>
+  <button class="theme-choice" data-theme="Gold"><div class="theme-top"><span class="theme-name">Gold</span><span class="theme-check">✓ ACTIVO</span></div><div class="swatches"><i style="background:#100d08"></i><i style="background:#302515"></i><i style="background:#e6bd65"></i><i style="background:#fff8e8"></i></div><div class="theme-desc">Negro premium con detalles dorados</div></button>
+ </div>
+ <div class="theme-preview" aria-live="polite">
+  <div class="preview-head"><span>VISTA PREVIA DEL TEMA</span><span class="preview-name" id="themePreviewName">NEON</span></div>
+  <div class="preview-eq" aria-hidden="true"><i style="height:20%"></i><i style="height:38%"></i><i style="height:55%"></i><i style="height:35%"></i><i style="height:76%"></i><i style="height:95%"></i><i style="height:65%"></i><i style="height:43%"></i><i style="height:70%"></i><i style="height:28%"></i><i style="height:50%"></i><i style="height:82%"></i><i style="height:45%"></i><i style="height:23%"></i><i style="height:61%"></i></div>
+  <div class="preview-bottom"><span class="preview-chip active">● Audio activo</span><span class="preview-chip">Mastering</span><span class="preview-chip">Studio UI</span></div>
+ </div>
+ <div class="quality-block">
+  <div class="quality-title">⚙️ Calidad de procesamiento</div>
+  <div class="quality-sub">Esto es independiente del aspecto visual. Ajusta el coste de los efectos: rendimiento usa menos cola de reverb, equilibrado es el punto medio y máxima calidad usa una cola más larga y sobremuestreo.</div>
+  <div class="quality-grid"><button class="quality-choice" data-quality="performance">⚡<br>Rendimiento</button><button class="quality-choice active" data-quality="balanced">◈<br>Equilibrado</button><button class="quality-choice" data-quality="ultra">✦<br>Máxima calidad</button></div>
+ </div>
+</section>
+<footer class="status" style="text-align:center">BASS LAB · MOBILE AUDIO STUDIO · Procesamiento local en tu dispositivo</footer>
+</main>
+<nav class="nav">
+ <a href="#home"><span>⌂</span>Inicio</a><a href="#eq"><span>≋</span>EQ</a><a href="#dynamics"><span>◉</span>Dinámica</a><a href="#fx"><span>✧</span>Efectos</a><a href="#stereo"><span>◉</span>Estéreo</a><a href="#export"><span>⇩</span>Exportar</a>
+</nav>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+let ctx=null,buffer=null,source=null,playing=false,startAt=0,offset=0,raf=0,selected=null,activeMode='processed',exportBlob=null,exportUrl=null,autoBoost=0;
+let curve=Array(101).fill(0),curvePointer=null,curveLast=null,wavePointer=null,waveAnchor=0,graphNow=null;
+const themes={Neon:['#090b12','#121622','#1a2030','#293246','#f4f7ff','#929db2','#b66cff'],Cyber:['#06101a','#0c1c2a','#102a3a','#17445a','#e5f8ff','#8db7c9','#21c9ff'],Crimson:['#16090d','#211017','#32151f','#522331','#fff0f3','#c69aa5','#ff405e'],Graphite:['#101216','#1b1e24','#272c34','#414954','#f3f5f7','#aab2bf','#c3ccd8'],Toxic:['#07130b','#0e2012','#142c18','#294b2c','#edffe9','#a4c69e','#7cff4f'],Amber:['#170e06','#25170b','#38220e','#5a3718','#fff6e9','#c6a985','#ffad42'],Silver:['#e9edf3','#f5f7fa','#fff','#c6ced9','#19202a','#667085','#647fba'],RGB:['#10101a','#1d1424','#292039','#49305c','#fff6ff','#c7b2d4','#ff55bc'],Midnight:['#050b20','#0b1430','#111e42','#263c72','#edf2ff','#9baedc','#618aff'],Gold:['#100d08','#201a10','#302515','#554222','#fff8e8','#c4b58f','#e6bd65']};
+function setTheme(name){
+ const v=themes[name]||themes.Neon;
+ ['--bg','--panel','--panel2','--line','--text','--muted','--a'].forEach((k,i)=>document.documentElement.style.setProperty(k,v[i]));
+ document.querySelectorAll('.theme-choice').forEach(b=>{const active=b.dataset.theme===name;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active?'true':'false')});
+ const label=$('themePreviewName');if(label)label.textContent=name.toUpperCase();
+ document.querySelector('meta[name="theme-color"]')?.setAttribute('content',v[0]);
+}
+document.querySelectorAll('.theme-choice').forEach(b=>b.addEventListener('click',()=>{setTheme(b.dataset.theme);try{localStorage.setItem('basslab-theme',b.dataset.theme)}catch(e){}}));
+let savedTheme='Neon';try{savedTheme=localStorage.getItem('basslab-theme')||'Neon'}catch(e){}setTheme(savedTheme);
+document.querySelectorAll('.quality-choice').forEach(b=>b.onclick=()=>{document.querySelectorAll('.quality-choice').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-pressed','false')});b.classList.add('active');b.setAttribute('aria-pressed','true');try{localStorage.setItem('basslab-quality',b.dataset.quality)}catch(e){}});
+try{const savedQuality=localStorage.getItem('basslab-quality');if(savedQuality){document.querySelectorAll('.quality-choice').forEach(b=>{const active=b.dataset.quality===savedQuality;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active?'true':'false')})}}catch(e){}
+const extraBands=[['Presence · 500 Hz',500],['Clarity · 2 kHz',2000],['Brilliance · 6 kHz',6000],['Air · 12 kHz',12000]];
+extraBands.forEach((v,i)=>{$('extraEq').insertAdjacentHTML('beforeend',`<div class="control"><div class="control-top"><span class="control-title">${v[0]}</span><output id="extra${i}Out">0.0 dB</output></div><input class="range" id="extra${i}" type="range" min="-24" max="24" step=".1" value="0"></div>`)});
+function n(id,d=0){const x=Number($(id)?.value);return Number.isFinite(x)?x:d}
+function settings(){return {boost:n('manualGain')/25,eq:[0,1,2].map(i=>n('eq'+i)),freq:[0,1,2].map((i)=>n('freq'+i,[40,90,185][i])),q:Math.max(.1,n('qValue',.9)),extra:extraBands.map((_,i)=>n('extra'+i)),hp:n('hp',20),lp:n('lp',20000),input:Math.pow(10,n('inputGain')/20),master:n('master',100)/100,comp:$('compressorEnabled').checked,threshold:n('threshold',-18),ratio:n('ratio',3),attack:n('attack',10)/1000,release:n('release',120)/1000,limiter:$('limiter').checked,ceiling:n('ceiling',-1),drive:n('drive'),reverb:n('reverb')/100,delay:n('delay')/100,delayMs:n('delayMs',320)/1000,pan:n('pan')/100,chorus:n('chorus')/100,flanger:n('flanger')/100,stereoWidth:n('stereoWidth',100)/100}}
+function fmt(t){t=Math.max(0,t||0);return String(Math.floor(t/60)).padStart(2,'0')+':'+String(Math.floor(t%60)).padStart(2,'0')}
+function curveAt(t){if(!buffer)return 0;return curve[Math.max(0,Math.min(100,Math.round(t/buffer.duration*100)))]||0}
+function curveAutomation(node,duration,base,auto){node.gain.setValueAtTime(Math.max(-12,Math.min(40,base+auto+curve[0]*.08)),0);for(let i=1;i<=100;i++)node.gain.linearRampToValueAtTime(Math.max(-12,Math.min(40,base+auto+curve[i]*.08)),duration*i/100)}
+function qualityMode(){try{return localStorage.getItem('basslab-quality')||'balanced'}catch{return 'balanced'}}
+function makeImpulse(ac){const seconds=qualityMode()==='performance'?.65:qualityMode()==='ultra'?2.4:1.2;const len=Math.floor(ac.sampleRate*seconds),b=ac.createBuffer(2,len,ac.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3)}return b}
+function makeGraph(ac,dest,processed=true,duration=buffer?.duration||1){
+ const input=ac.createGain();input.gain.value=processed?settings().input:1;
+ if(!processed){input.connect(dest);return {input,nodes:[]}}
+ const s=settings(),nodes=[];
+ const low=ac.createBiquadFilter();low.type='lowshelf';low.frequency.value=105;
+ const bands=[0,1,2].map(i=>{const f=ac.createBiquadFilter();f.type='peaking';f.frequency.value=s.freq[i];f.Q.value=s.q;f.gain.value=s.eq[i];return f});
+ const extra=[500,2000,6000].map((hz,i)=>{const f=ac.createBiquadFilter();f.type='peaking';f.frequency.value=hz;f.Q.value=1;f.gain.value=s.extra[i];return f});
+ const air=ac.createBiquadFilter();air.type='highshelf';air.frequency.value=12000;air.gain.value=s.extra[3];
+ const hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=s.hp;
+ const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=s.lp;
+ const shaper=ac.createWaveShaper();
+ if(s.drive>0){const c=new Float32Array(2048),k=1+s.drive*.15;for(let i=0;i<c.length;i++){const x=i*2/(c.length-1)-1;c[i]=(1+k)*x/(1+k*Math.abs(x))}shaper.curve=c;shaper.oversample=qualityMode()==='performance'?'none':qualityMode()==='ultra'?'4x':'2x'}
+ const pan=ac.createStereoPanner();pan.pan.value=s.pan;
+ const dry=ac.createGain();dry.gain.value=1;
+ const conv=ac.createConvolver();conv.buffer=makeImpulse(ac);const rev=ac.createGain();rev.gain.value=s.reverb*.5;
+ const delay=ac.createDelay(1.5);delay.delayTime.value=Math.max(.05,Math.min(1.2,s.delayMs));const delayGain=ac.createGain();delayGain.gain.value=s.delay*.45;
+ const comp=ac.createDynamicsCompressor();comp.threshold.value=s.threshold;comp.ratio.value=s.ratio;comp.attack.value=s.attack;comp.release.value=s.release;comp.knee.value=8;
+ const limiter=ac.createDynamicsCompressor();limiter.threshold.value=s.ceiling;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.001;limiter.release.value=.06;
+ const master=ac.createGain();master.gain.value=s.master;
+ const analyser=ac.createAnalyser();analyser.fftSize=2048;
+ const chain=[low,...bands,...extra,air,hp,lp,shaper,pan];chain.forEach((f,i)=>{if(i===0)input.connect(f);else chain[i-1].connect(f)});
+ curveAutomation(low,duration,s.boost,autoBoost);
+ const last=chain[chain.length-1];
+ const split=ac.createChannelSplitter(2),merge=ac.createChannelMerger(2);
+ const gLL=ac.createGain(),gLR=ac.createGain(),gRL=ac.createGain(),gRR=ac.createGain();
+ const wa=(1+s.stereoWidth)/2,wb=(1-s.stereoWidth)/2;
+ gLL.gain.value=wa;gLR.gain.value=wb;gRL.gain.value=wb;gRR.gain.value=wa;
+ last.connect(split);split.connect(gLL,0);split.connect(gLR,0);split.connect(gRL,1);split.connect(gRR,1);
+ gLL.connect(merge,0,0);gRL.connect(merge,0,0);gLR.connect(merge,0,1);gRR.connect(merge,0,1);
+ merge.connect(dry);dry.connect(master);
+ last.connect(conv);conv.connect(rev);rev.connect(master);last.connect(delay);delay.connect(delayGain);delayGain.connect(master);
+ if(s.chorus>0){const cd=ac.createDelay(.08),co=ac.createGain(),lfo=ac.createOscillator(),depth=ac.createGain();cd.delayTime.value=.025;depth.gain.value=.009*s.chorus;lfo.frequency.value=.22;lfo.connect(depth);depth.connect(cd.delayTime);co.gain.value=s.chorus*.32;last.connect(cd);cd.connect(co);co.connect(master);lfo.start(0);nodes.push(cd,co,lfo,depth)}
+ if(s.flanger>0){const fd=ac.createDelay(.05),fw=ac.createGain(),fb=ac.createGain(),flfo=ac.createOscillator(),fdepth=ac.createGain();fd.delayTime.value=.008;fdepth.gain.value=.003*s.flanger;flfo.frequency.value=.35;flfo.connect(fdepth);fdepth.connect(fd.delayTime);fw.gain.value=s.flanger*.3;fb.gain.value=s.flanger*.55;last.connect(fd);fd.connect(fw);fw.connect(master);fd.connect(fb);fb.connect(fd);flfo.start(0);nodes.push(fd,fw,fb,flfo,fdepth)}
+ let post=master;if(s.comp){post.connect(comp);post=comp}if(s.limiter){post.connect(limiter);post=limiter}post.connect(analyser);analyser.connect(dest);
+ nodes.push(...chain,dry,conv,rev,delay,delayGain,comp,limiter,master,analyser,split,merge,gLL,gLR,gRL,gRR);
+ return {input,nodes,low,analyser};
+}
+function resize(c,ctx2){const r=c.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1),w=Math.max(1,Math.round(r.width*d)),h=Math.max(1,Math.round(r.height*d));if(c.width!==w||c.height!==h){c.width=w;c.height=h}ctx2.setTransform(d,0,0,d,0,0);return {w:r.width,h:r.height}}
+const wave=$('wave'),wc=wave.getContext('2d'),curveCanvas=$('curve'),cc=curveCanvas.getContext('2d'),spectrum=$('spectrum'),sc=spectrum.getContext('2d');
+function drawWave(){const {w,h}=resize(wave,wc);wc.clearRect(0,0,w,h);if(!buffer){wc.fillStyle='#8994a8';wc.fillText('Importa una canción',12,h/2);return}const d=buffer.getChannelData(0),step=Math.max(1,Math.floor(d.length/w)),mid=h/2;wc.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--a');for(let x=0;x<w;x++){let mn=1,mx=-1;for(let j=0;j<step&&x*step+j<d.length;j++){const v=d[x*step+j];mn=Math.min(mn,v);mx=Math.max(mx,v)}wc.beginPath();wc.moveTo(x,mid+mn*mid*.9);wc.lineTo(x,mid+mx*mid*.9);wc.stroke()}if(selected){wc.fillStyle='#ffffff30';wc.fillRect(selected[0]/buffer.duration*w,0,(selected[1]-selected[0])/buffer.duration*w,h)}}
+function drawCurve(){const {w,h}=resize(curveCanvas,cc);cc.clearRect(0,0,w,h);cc.strokeStyle='#44516a';for(let i=1;i<4;i++){cc.beginPath();cc.moveTo(0,h*i/4);cc.lineTo(w,h*i/4);cc.stroke()}cc.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--a');cc.lineWidth=2;cc.beginPath();curve.forEach((v,i)=>{const x=i/100*w,y=h-(v+50)/100*h;i?cc.lineTo(x,y):cc.moveTo(x,y)});cc.stroke()}
+function point(e){const r=curveCanvas.getBoundingClientRect(),x=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),y=Math.max(0,Math.min(1,(e.clientY-r.top)/r.height));return {i:Math.round(x*100),v:Math.max(-50,Math.min(50,(.5-y)*100))}}
+function curveFinish(e){if(curvePointer===null||e&&e.pointerId!==curvePointer)return;curvePointer=null;curveLast=null}
+curveCanvas.addEventListener('pointerdown',e=>{e.preventDefault();curvePointer=e.pointerId;curveCanvas.setPointerCapture(e.pointerId);curveLast=point(e);curve[curveLast.i]=curveLast.v;drawCurve()});
+curveCanvas.addEventListener('pointermove',e=>{if(curvePointer!==e.pointerId||!curveLast)return;e.preventDefault();const p=point(e),a=curveLast;for(let i=Math.min(a.i,p.i);i<=Math.max(a.i,p.i);i++){const t=(i-a.i)/(p.i-a.i||1);curve[i]=a.v+(p.v-a.v)*t}curveLast=p;drawCurve()});
+['pointerup','pointercancel','lostpointercapture'].forEach(ev=>curveCanvas.addEventListener(ev,curveFinish));
+$('resetCurve').onclick=()=>{curve=Array(101).fill(0);drawCurve()};
+function waveTime(e){const r=wave.getBoundingClientRect();return Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*buffer.duration}
+wave.addEventListener('pointerdown',e=>{if(!buffer)return;e.preventDefault();wavePointer=e.pointerId;wave.setPointerCapture(e.pointerId);waveAnchor=waveTime(e);selected=[waveAnchor,waveAnchor];drawWave()});
+wave.addEventListener('pointermove',e=>{if(wavePointer!==e.pointerId||!buffer)return;const t=waveTime(e);selected=[Math.min(t,waveAnchor),Math.max(t,waveAnchor)];drawWave()});
+function finishWave(e){if(wavePointer===null||e&&e.pointerId!==wavePointer)return;wavePointer=null;if(selected&&selected[1]-selected[0]<.2)selected=null;$('selectionLabel').textContent=selected?fmt(selected[0])+' – '+fmt(selected[1]):'Toda la canción';drawWave()}
+['pointerup','pointercancel','lostpointercapture'].forEach(ev=>wave.addEventListener(ev,finishWave));
+$('clearSel').onclick=()=>{selected=null;$('selectionLabel').textContent='Toda la canción';drawWave()};
+function stop(){if(source){try{source.stop()}catch{}try{source.disconnect()}catch{}source=null}if(graphNow){graphNow.nodes?.forEach(node=>{try{if(typeof node.stop==='function')node.stop()}catch{}try{node.disconnect()}catch{}});try{graphNow.input.disconnect()}catch{}}playing=false;cancelAnimationFrame(raf);graphNow=null;$('play').textContent='▶'}
+function currentTime(){return playing?Math.min(buffer.duration,offset+ctx.currentTime-startAt):offset}
+function drawSpectrum(){const {w,h}=resize(spectrum,sc);sc.clearRect(0,0,w,h);sc.strokeStyle='#293246';for(let i=1;i<5;i++){sc.beginPath();sc.moveTo(0,h*i/5);sc.lineTo(w,h*i/5);sc.stroke()}if(!playing||!graphNow?.analyser){sc.fillStyle='#8794a8';sc.font='11px sans-serif';sc.fillText('Pulsa PROCESADO para ver el espectro',10,h/2);return}const a=new Uint8Array(graphNow.analyser.frequencyBinCount);graphNow.analyser.getByteFrequencyData(a);sc.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--a');const bins=80;for(let i=0;i<bins;i++){const ix=Math.floor(Math.pow(i/bins,2)*a.length),v=a[ix]/255,bh=v*h;sc.fillRect(i*w/bins,h-bh,Math.max(1,w/bins-1),bh)}}
+function tick(){if(!buffer)return;const t=currentTime();$('clock').textContent=fmt(t);$('seek').value=Math.round(t/buffer.duration*1000);drawSpectrum();drawWave();if(playing)raf=requestAnimationFrame(tick)}
+async function play(processed=true,from=null){if(!buffer)return;stop();if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();await ctx.resume();const start=from===null?(selected?selected[0]:offset):from,end=selected?selected[1]:buffer.duration;source=ctx.createBufferSource();source.buffer=buffer;graphNow=makeGraph(ctx,ctx.destination,processed,Math.max(.01,end-start));source.connect(graphNow.input);source.start(0,start,Math.max(.01,end-start));offset=start;startAt=ctx.currentTime;playing=true;activeMode=processed?'processed':'original';$('modeLabel').textContent='Modo: '+(processed?'procesado':'original');$('play').textContent='Ⅱ';source.onended=()=>{if(playing){playing=false;offset=end;$('play').textContent='▶';if(graphNow){graphNow.nodes?.forEach(node=>{try{if(typeof node.stop==='function')node.stop()}catch{}try{node.disconnect()}catch{}});try{graphNow.input.disconnect()}catch{}graphNow=null}tick()}};tick()}
+$('play').onclick=()=>playing?stop():play(activeMode==='processed');$('original').onclick=()=>play(false);$('processed').onclick=()=>play(true);$('seek').oninput=()=>{if(buffer)play(activeMode==='processed',buffer.duration*n('seek')/1000)};
+$('choose').onclick=()=>$('file').click();$('file').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{stop();if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();buffer=await ctx.decodeAudioData(await file.arrayBuffer());offset=0;selected=null;curve=Array(101).fill(0);$('drop').classList.add('hidden');$('loaded').classList.remove('hidden');$('filename').textContent=file.name;$('duration').textContent=fmt(buffer.duration)+' · '+buffer.numberOfChannels+' canales · '+buffer.sampleRate+' Hz';$('durationSmall').textContent=fmt(buffer.duration);$('fileMeta').textContent=buffer.sampleRate+' Hz';$('status').textContent='Audio cargado. Ya puedes ajustar el estudio.';['play','original','processed','seek','analyze','render'].forEach(id=>$(id).disabled=false);$('exportStatus').textContent='Listo para procesar.';drawWave();drawCurve();tick()}catch(err){$('status').textContent='No se pudo decodificar el archivo. Prueba otro WAV, MP3 o M4A.';console.error(err)}};
+$('remove').onclick=()=>{stop();buffer=null;selected=null;$('loaded').classList.add('hidden');$('drop').classList.remove('hidden');$('file').value='';['play','original','processed','seek','analyze','render'].forEach(id=>$(id).disabled=true);drawWave()};
+$('manualGain').oninput=updateLabels;
+function updateLabels(){
+ $('manualOut').textContent='+'+(n('manualGain')/25).toFixed(1)+' dB';
+ [0,1,2].forEach(i=>{$('eq'+i+'Out').textContent=(n('eq'+i)>0?'+':'')+n('eq'+i).toFixed(1)+' dB'});
+ extraBands.forEach((_,i)=>$('extra'+i+'Out').textContent=(n('extra'+i)>0?'+':'')+n('extra'+i).toFixed(1)+' dB');
+ $('hpOut').textContent=n('hp')+' Hz';$('lpOut').textContent=(n('lp')/1000).toFixed(1)+' kHz';
+ $('inputOut').textContent=n('inputGain')+' dB';$('masterOut').textContent=n('master')+'%';
+ $('thresholdOut').textContent=n('threshold')+' dB';$('ratioOut').textContent=n('ratio')+':1';$('attackOut').textContent=n('attack')+' ms';$('releaseOut').textContent=n('release')+' ms';$('ceilingOut').textContent=n('ceiling')+' dB';
+ $('driveOut').textContent=n('drive')+'%';$('reverbOut').textContent=n('reverb')+'%';$('delayOut').textContent=n('delay')+'%';$('chorusOut').textContent=n('chorus')+'%';$('flangerOut').textContent=n('flanger')+'%';$('widthOut').textContent=n('stereoWidth',100)+'%';$('panOut').textContent=n('pan')===0?'Centro':(n('pan')<0?'Izquierda ':'Derecha ')+Math.abs(n('pan'))+'%';$('sensitivityOut').textContent=n('sensitivity')+'%';
+}
+document.querySelectorAll('input').forEach(el=>{if(el.type==='range'||el.type==='number')el.addEventListener('input',()=>{updateLabels();if(playing&&activeMode==='processed'){const t=currentTime();play(true,t)}})});
+$('analyze').onclick=()=>{if(!buffer)return;const d=buffer.getChannelData(0),step=Math.max(1,Math.floor(d.length/200000));let total=0,low=0;for(let i=0;i<d.length;i+=step){const v=d[i];total+=v*v;if(i%8===0)low+=v*v}const rms=Math.sqrt(total/Math.ceil(d.length/step));autoBoost=Math.max(0,Math.min(8,(.16-rms)*35))*(n('sensitivity',55)/55);if(!$('autoBass').checked)autoBoost=0;$('analysisStatus').textContent='Análisis terminado · energía RMS '+rms.toFixed(3)+' · sugerencia de graves +'+autoBoost.toFixed(1)+' dB. Ajusta el control manual a tu gusto.'};
+// Presets, copia A/B y gestión portable de ajustes.
+const controlSelector='input[type="range"],input[type="number"],input[type="checkbox"],select';
+function captureSettings(){const values={};document.querySelectorAll(controlSelector).forEach(el=>{if(el.id&&el.id!=='file'&&el.id!=='settingsFile')values[el.id]=el.type==='checkbox'?el.checked:el.value});return {version:1,values,curve:curve.slice(),theme:(document.querySelector('.theme-choice.active')?.dataset.theme||'Neon')}}
+function applySettings(data){if(!data||!data.values)throw new Error('El archivo de ajustes no tiene un formato válido.');Object.entries(data.values).forEach(([id,val])=>{const el=$(id);if(!el||id==='file'||id==='settingsFile')return;if(el.type==='checkbox')el.checked=!!val;else el.value=val});if(Array.isArray(data.curve)&&data.curve.length===101)curve=data.curve.map(v=>Math.max(-50,Math.min(50,Number(v)||0)));if(data.theme&&themes[data.theme]){setTheme(data.theme);try{localStorage.setItem('basslab-theme',data.theme)}catch(e){}}updateLabels();drawCurve();if(playing&&activeMode==='processed')play(true,currentTime())}
+const presetValues={
+ clean:{manualGain:0,eq0:0,eq1:0,eq2:0,extra0:0,extra1:0,extra2:0,extra3:0,hp:20,lp:20000,inputGain:0,master:90,compressorEnabled:true,threshold:-18,ratio:2,attack:20,release:180,limiter:true,ceiling:-1,drive:0,reverb:0,delay:0,pan:0,chorus:0,flanger:0,stereoWidth:100},
+ bass:{manualGain:260,eq0:8,eq1:5,eq2:1,extra0:0,extra1:1,extra2:1,extra3:0,hp:28,lp:18000,inputGain:-2,master:78,compressorEnabled:true,threshold:-22,ratio:3.5,attack:18,release:140,limiter:true,ceiling:-1.2,drive:8,reverb:0,delay:0,pan:0,chorus:0,flanger:0,stereoWidth:105},
+ club:{manualGain:180,eq0:5,eq1:3,eq2:-1,extra0:2,extra1:3,extra2:2,extra3:1,hp:32,lp:19000,inputGain:-3,master:78,compressorEnabled:true,threshold:-25,ratio:4.5,attack:12,release:110,limiter:true,ceiling:-1,drive:15,reverb:5,delay:0,pan:0,chorus:8,flanger:0,stereoWidth:115},
+ vocal:{manualGain:0,eq0:-2,eq1:-1,eq2:1,extra0:2,extra1:4,extra2:1,extra3:1,hp:85,lp:18000,inputGain:0,master:90,compressorEnabled:true,threshold:-24,ratio:3,attack:5,release:100,limiter:true,ceiling:-1,drive:0,reverb:8,delay:0,pan:0,chorus:0,flanger:0,stereoWidth:100},
+ warm:{manualGain:60,eq0:2,eq1:2,eq2:1,extra0:1,extra1:0,extra2:-2,extra3:-2,hp:25,lp:16000,inputGain:0,master:88,compressorEnabled:true,threshold:-20,ratio:2,attack:30,release:220,limiter:true,ceiling:-1,drive:10,reverb:6,delay:0,pan:0,chorus:4,flanger:0,stereoWidth:100},
+ bright:{manualGain:0,eq0:-1,eq1:0,eq2:0,extra0:1,extra1:2,extra2:4,extra3:5,hp:30,lp:20000,inputGain:-1,master:85,compressorEnabled:true,threshold:-20,ratio:2.5,attack:15,release:150,limiter:true,ceiling:-1,drive:0,reverb:4,delay:0,pan:0,chorus:10,flanger:0,stereoWidth:110}
+};
+$('presetSelect').addEventListener('change',e=>{const key=e.target.value;if(!key||!presetValues[key])return;const current=captureSettings();applySettings({values:{...current.values,...presetValues[key]},curve:Array(101).fill(0),theme:current.theme});$('presetStatus').textContent='Preset aplicado. Ajusta los controles a tu gusto.'});
+$('savePreset').onclick=()=>{try{localStorage.setItem('basslab-custom-preset',JSON.stringify(captureSettings()));$('presetStatus').textContent='Preset propio guardado en este dispositivo.'}catch(e){$('presetStatus').textContent='No se pudo guardar. Exporta los ajustes como JSON.'}};
+$('loadPreset').onclick=()=>{try{const data=JSON.parse(localStorage.getItem('basslab-custom-preset')||'null');if(!data)throw new Error('Todavía no hay un preset guardado.');applySettings(data);$('presetStatus').textContent='Tu preset personalizado se ha cargado.'}catch(e){$('presetStatus').textContent=e.message}};
+$('exportSettings').onclick=()=>{const blob=new Blob([JSON.stringify(captureSettings(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='BASS-LAB-ajustes.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$('presetStatus').textContent='Configuración exportada en formato JSON.'};
+$('importSettings').onclick=()=>$('settingsFile').click();
+$('settingsFile').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{applySettings(JSON.parse(await f.text()));$('presetStatus').textContent='Ajustes importados correctamente.'}catch(err){$('presetStatus').textContent='No se pudieron importar: '+err.message}e.target.value=''};
+let pointA=null;
+$('abStore').onclick=()=>{pointA=captureSettings();$('presetStatus').textContent='Punto A guardado. Puedes seguir editando y volver a él cuando quieras.'};
+$('abRecall').onclick=()=>{if(!pointA){$('presetStatus').textContent='Primero guarda un punto A.';return}applySettings(pointA);$('presetStatus').textContent='Punto A restaurado.'};
+$('resetAll').onclick=()=>{if(!confirm('¿Reiniciar todos los ajustes de audio y la curva?'))return;document.querySelectorAll(controlSelector).forEach(el=>{if(el.type==='range'||el.type==='number')el.value=el.defaultValue;if(el.type==='checkbox')el.checked=el.defaultChecked});curve=Array(101).fill(0);autoBoost=0;updateLabels();drawCurve();if(playing&&activeMode==='processed')play(true,currentTime());$('presetStatus').textContent='Ajustes de audio reiniciados.'};
+function writeWav(buf,bits){const channels=buf.numberOfChannels,sr=buf.sampleRate,frames=buf.length,bytes=bits===32?4:bits===24?3:2,dataSize=frames*channels*bytes,ab=new ArrayBuffer(44+dataSize),v=new DataView(ab);function str(o,t){for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i))}str(0,'RIFF');v.setUint32(4,36+dataSize,true);str(8,'WAVE');str(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,bits===32?3:1,true);v.setUint16(22,channels,true);v.setUint32(24,sr,true);v.setUint32(28,sr*channels*bytes,true);v.setUint16(32,channels*bytes,true);v.setUint16(34,bits,true);str(36,'data');v.setUint32(40,dataSize,true);let p=44;const data=Array.from({length:channels},(_,c)=>buf.getChannelData(c));for(let i=0;i<frames;i++)for(let c=0;c<channels;c++){let x=Math.max(-1,Math.min(1,data[c][i]));if(bits===32){v.setFloat32(p,x,true);p+=4}else if(bits===24){let z=Math.round(x<0?x*8388608:x*8388607);v.setUint8(p,z&255);v.setUint8(p+1,(z>>8)&255);v.setUint8(p+2,(z>>16)&255);p+=3}else{v.setInt16(p,Math.round(x<0?x*32768:x*32767),true);p+=2}}return new Blob([ab],{type:'audio/wav'})}
+$('render').onclick=async()=>{if(!buffer)return;$('render').disabled=true;$('exportStatus').textContent='Procesando audio…';try{const start=selected?selected[0]:0,end=selected?selected[1]:buffer.duration,duration=Math.max(.01,end-start),rate=$('sampleRate').value==='original'?buffer.sampleRate:Number($('sampleRate').value),frames=Math.ceil(duration*rate),off=new OfflineAudioContext(buffer.numberOfChannels,frames,rate),src=off.createBufferSource();src.buffer=buffer;const g=makeGraph(off,off.destination,true,duration);src.connect(g.input);src.start(0,start,duration);const rendered=await off.startRendering();const bits=n('bitDepth',16);if($('format').value==='mp3'){if(!window.lamejs){await new Promise((resolve,reject)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js';sc.onload=resolve;sc.onerror=reject;document.head.append(sc)})}if(!window.lamejs)throw new Error('No se pudo cargar el codificador MP3. Elige WAV o comprueba la conexión.');const left=rendered.getChannelData(0),right=rendered.numberOfChannels>1?rendered.getChannelData(1):null,encoder=new lamejs.Mp3Encoder(rendered.numberOfChannels,rate,n('bitrate',320)),chunk=1152,parts=[];for(let i=0;i<left.length;i+=chunk){const l=new Int16Array(chunk),r=right?new Int16Array(chunk):null;for(let j=0;j<chunk&&i+j<left.length;j++){l[j]=Math.max(-32768,Math.min(32767,left[i+j]*32767));if(r)r[j]=Math.max(-32768,Math.min(32767,right[i+j]*32767))}const out=right?encoder.encodeBuffer(l,r):encoder.encodeBuffer(l);if(out.length)parts.push(new Uint8Array(out))}const endMp3=encoder.flush();if(endMp3.length)parts.push(new Uint8Array(endMp3));exportBlob=new Blob(parts,{type:'audio/mpeg'})}else exportBlob=writeWav(rendered,bits);if(exportUrl)URL.revokeObjectURL(exportUrl);exportUrl=URL.createObjectURL(exportBlob);const name=($('filename').textContent||'basslab').replace(/\.[^.]+$/,'');const ext=$('format').value;const a=$('download');a.href=exportUrl;a.download=name+'_BASSLAB.'+ext;a.textContent='Descargar '+a.download;a.classList.remove('hidden');$('save').disabled=false;$('exportStatus').textContent='Archivo preparado · '+(exportBlob.size/1048576).toFixed(2)+' MB · '+rate+' Hz'}catch(err){console.error(err);$('exportStatus').textContent='No se pudo exportar: '+err.message+'. Prueba WAV 16-bit a 44.100 Hz.'}finally{$('render').disabled=false}};
+$('save').onclick=async()=>{if(!exportBlob)return;const file=new File([exportBlob],$('download').download,{type:exportBlob.type});if(navigator.share&&navigator.canShare?.({files:[file]})){try{await navigator.share({files:[file],title:'BASS LAB'})}catch(e){if(e.name!=='AbortError')console.warn(e)}}else $('download').click()};
+$('language')?.addEventListener('change',()=>{});
+window.addEventListener('resize',()=>{drawWave();drawCurve();drawSpectrum()});
+updateLabels();drawWave();drawCurve();drawSpectrum();
+})();
+</script>
+</body></html>
